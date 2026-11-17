@@ -1,0 +1,53 @@
+import java.util.Scanner;
+
+// Question 1: The Wi-Fi Password Scrambler
+public class Q1 {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter Original Phrase: ");
+        String phrase = input.nextLine();
+
+        // First pass: build the shift key from all digits.
+        int key = 0;
+        for (int i = 0; i < phrase.length(); i++) {
+            char ch = phrase.charAt(i);
+            if (ch >= '0' && ch <= '9') {
+                key = (key + ch - '0') % 26;
+            }
+        }
+        if (key == 0) {
+            key = 13;
+        }
+
+        // Second pass: encode the characters in their original order.
+        StringBuilder encoded = new StringBuilder();
+        String symbols = "!@#$%";
+        for (int i = 0; i < phrase.length(); i++) {
+            char ch = phrase.charAt(i);
+            if (ch >= 'a' && ch <= 'z') {
+                encoded.append((char) ('a' + (ch - 'a' + key) % 26));
+            } else if (ch >= 'A' && ch <= 'Z') {
+                if ("AEIOU".indexOf(ch) >= 0) {
+                    encoded.append('*').append((char) (ch - 'A' + 'a'));
+                } else {
+                    encoded.append((char) ('a' + (ch - 'A' + 1) % 26));
+                }
+            } else if (ch >= '0' && ch <= '9') {
+                int digit = ch - '0';
+                encoded.append(digit * digit % 10);
+            } else if (ch == ' ') {
+                encoded.append('.');
+            } else if (symbols.indexOf(ch) >= 0) {
+                int position = symbols.indexOf(ch);
+                encoded.append(symbols.charAt((position + 2) % symbols.length()));
+            } else {
+                encoded.append(ch);
+            }
+        }
+
+        System.out.println("Shift Key: " + key);
+        System.out.println("Before Reversal: " + encoded);
+        System.out.println("Encoded Password: " + encoded.reverse());
+        input.close();
+    }
+}
